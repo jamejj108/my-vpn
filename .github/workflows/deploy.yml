@@ -1,0 +1,30 @@
+name: Deploy VPN
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Start VPN Server
+        run: |
+          docker run -d --name vless-server -p 80:80 ghcr.io/yulangg/vless-server:latest
+          
+          echo "=================================================="
+          echo "VPN SERVER DETAILS"
+          echo "=================================================="
+          echo "IP/Address: $(curl -s ifconfig.me)"
+          echo "Port: 80"
+          echo "UUID: 84df6f9e-64bf-4f16-bd8c-02cf4603e8a4"
+          echo "Network: ws"
+          echo "Path: /vless"
+          echo "TLS: Disable (None)"
+          echo "=================================================="
+          
+          # Keep alive loop to bypass exit code 125
+          for i in {1..360}; do
+            sleep 60
+            echo "Server is running... minute $i"
+          done
